@@ -1,29 +1,17 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-
 class Modelo {
   String? cep;
   String? bairro;
   String? localidade;
   String? uf;
   String? ddd;
-  Modelo({
-    this.cep,
-    this.bairro,
-    this.localidade,
-    this.uf,
-    this.ddd,
-  });
+  bool? erro;
+  Modelo({this.cep, this.bairro, this.localidade, this.uf, this.ddd, this.erro});
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'cep': cep,
-      'bairro': bairro,
-      'localidade': localidade,
-      'uf': uf,
-      'ddd': ddd,
-    };
+    return <String, dynamic>{'cep': cep, 'bairro': bairro, 'localidade': localidade, 'uf': uf, 'ddd': ddd, 'erro': erro};
   }
 
   factory Modelo.fromMap(Map<String, dynamic> map) {
@@ -33,6 +21,7 @@ class Modelo {
       localidade: map['localidade'] != null ? map['localidade'] as String : null,
       uf: map['uf'] != null ? map['uf'] as String : null,
       ddd: map['ddd'] != null ? map['ddd'] as String : null,
+      erro: map['erro'] != null ? (map['erro'] == 'true' ? true : false) : null,
     );
   }
 

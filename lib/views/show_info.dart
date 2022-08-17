@@ -1,32 +1,27 @@
+import 'package:buscacep/models/modelo.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_mobx/flutter_mobx.dart';
 
 import '../controller/viacep_controller.dart';
 
 class ShowInfo extends StatefulWidget {
-  const ShowInfo({Key? key}) : super(key: key);
-
+  final ViacepController controller;
+  const ShowInfo({Key? key, required this.controller}) : super(key: key);
   @override
   State<ShowInfo> createState() => _ShowInfoState();
 }
 
 class _ShowInfoState extends State<ShowInfo> {
-  final controller = ViacepController();
+  late final Modelo modeloCep;
   var ufName = 'br';
-
   @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((timeStamp) async {
-      var cepEC = ModalRoute.of(context)?.settings.arguments as String;
-      await controller.atualizaEndereco(cepEC);
-      ufName = controller.uf.toLowerCase();
-    });
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    modeloCep = ModalRoute.of(context)?.settings.arguments as Modelo;
+    ufName = modeloCep.uf!.toLowerCase();
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
   }
 
@@ -34,53 +29,50 @@ class _ShowInfoState extends State<ShowInfo> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-            'Busca do cep: ${ModalRoute.of(context)?.settings.arguments as String}'),
+        title: Text('Busca do cep: ${modeloCep.cep ?? ''}'),
       ),
       body: Column(
           // mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Observer(
-              builder: (context) => ListView(
-                shrinkWrap: true,
-                children: [
-                  Container(
-                    height: MediaQuery.of(context).size.height / 2.5,
-                    child: Image(image: AssetImage('assets/imgs/$ufName.png')),
+            ListView(
+              shrinkWrap: true,
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height / 2.5,
+                  child: Image(image: AssetImage('assets/imgs/$ufName.png')),
+                ),
+                Center(
+                    child: Text('Estado: ${modeloCep.uf}',
+                        style: const TextStyle(
+                          fontSize: 20,
+                        ))),
+                const SizedBox(
+                  height: 20,
+                ),
+                Center(
+                    child: Text('Municipio: ${modeloCep.localidade}',
+                        style: const TextStyle(
+                          fontSize: 20,
+                        ))),
+                const SizedBox(
+                  height: 20,
+                ),
+                Center(
+                    child: Text(
+                  'Bairro: ${modeloCep.bairro}',
+                  style: const TextStyle(
+                    fontSize: 20,
                   ),
-                  Center(
-                      child: Text('Estado: ${controller.uf}',
-                          style: const TextStyle(
-                            fontSize: 20,
-                          ))),
-                          const SizedBox(
-                    height: 20,
-                  ),
-                  Center(
-                      child: Text('Municipio: ${controller.localidade}',
-                          style: const TextStyle(
-                            fontSize: 20,
-                          ))),
-                          const SizedBox(
-                    height: 20,
-                  ),
-                  Center(
-                      child: Text(
-                    'Bairro: ${controller.bairro}',
-                    style: const TextStyle(
-                      fontSize: 20,
-                    ),
-                  )),
-                  const SizedBox(
-                    height: 20,
-                  ),
-                  Center(
-                      child: Text('DDD Local: ${controller.ddd}',
-                          style: const TextStyle(
-                            fontSize: 20,
-                          ))),
-                ],
-              ),
+                )),
+                const SizedBox(
+                  height: 20,
+                ),
+                Center(
+                    child: Text('DDD Local: ${modeloCep.ddd}',
+                        style: const TextStyle(
+                          fontSize: 20,
+                        ))),
+              ],
             ),
           ]),
     );
